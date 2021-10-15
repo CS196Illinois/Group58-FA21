@@ -30,6 +30,7 @@
 - Character movement
 - elementary hitboxes
 - rudidemtary level (Level 0 of game) -- tutorial level, introduces the features
+- Side Scrolling was not finished in sprint 1, need to implement that still
 ### Sprint 3
 - enemies
 - graphics
