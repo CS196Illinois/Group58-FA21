@@ -17,7 +17,7 @@ def keys_pressed():
         k_array[LEFT] = True
     if (keys[pygame.K_RIGHT] or keys[pygame.K_d]):
         k_array[RIGHT] = True
-    if (keys[pygame.K_UP] or keys[pygame.K_w]):
+    if (keys[pygame.K_UP] or keys[pygame.K_w] or keys[pygame.K_SPACE]):
         k_array[UP] = True
     if (keys[pygame.K_DOWN] or keys[pygame.K_s]):
         k_array[DOWN] = True
