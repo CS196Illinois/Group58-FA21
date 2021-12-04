@@ -1,10 +1,16 @@
 import pygame
 import window
 import map
+import entities
+import objects
 
 MAX_X = map.MAP_WIDTH
 mario = map.MARIO
 
+
+mario = entities.get_mario()
+
+boswer = entities.get_boswer()
 class Camera():
     def __init__(self):
         self.x = 0

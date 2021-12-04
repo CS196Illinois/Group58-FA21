@@ -1,7 +1,7 @@
 import pygame
 import entities
-import objects
 import os
+import objects
 
 MAP_WIDTH = 1500
 

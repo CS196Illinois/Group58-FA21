@@ -2,6 +2,18 @@ import os
 import pygame
 import input
 import objects
+import map
+
+# Mario size
+MARIO_WIDTH = 55
+MARIO_HEIGHT = 40
+MARIO_IMAGE_LOAD = pygame.image.load(os.path.join('images/mario.png'))
+MARIO_IMAGE = pygame.transform.rotate(pygame.transform.scale(MARIO_IMAGE_LOAD, (MARIO_WIDTH, MARIO_HEIGHT)),0)
+
+
+BOSWER_IMAGE_LOAD = pygame.image.load(os.path.join('images/boswer.png'))
+BOSWER_IMAGE = pygame.transform.rotate(pygame.transform.scale(BOSWER_IMAGE_LOAD,(55, 40)),0)
+
 
 GRAVITY = -0.03
 MIN_Y_VEL = -2.5
@@ -85,6 +97,8 @@ class Mario(Entity):
 
     # sets Mario's velocity based on which input is being given
     def handle_input(self):
+        arrayPosition = boswer.getPosition()
+        objectPosition = objects.get_object_positionArray()
         keys = input.keys_pressed()
         if(keys[input.LEFT]):
             self.x_vel = -1.25
@@ -98,11 +112,88 @@ class Mario(Entity):
         elif(keys[input.DOWN]):
             pass
         else:
-            pass
+            self.y_vel = self.y_vel
+        
+        
+        # collisons
+        if (self.x > arrayPosition[0] and self.x < arrayPosition[1] and self.y == arrayPosition[2]):
+            print("YOU HAVE LOST")
+            self.x = 0
+            self.y = 200 + MARIO_HEIGHT / 2
+            
+
+
+        # if (self.x >= objectPosition[0][0] and self.x <= objectPosition[0][1] and self.x >= objectPosition[0][2] and self.x <= objectPosition[0][3]):
+        #     print("YOU HAVE LOST")
+        #     self.x = 0
+        #     self.y = 200 + MARIO_HEIGHT / 2
+        
+        # if (self.x >= objectPosition[1][0] and self.x <= objectPosition[1][1] and self.x >= objectPosition[1][2] and self.x <= objectPosition[1][3]):
+        #     print("YOU HAVE LOST")
+        #     self.x = 0
+        #     self.y = 200 + MARIO_HEIGHT / 2
+
+        
+
 
     # override Entity update
     # handles input, sets Mario's x and y value as well as Mario's position on the screen
-    def update(self, object_list, flag):
+    def update(self):
         self.handle_input()
-        super().update(object_list)
- 
+        super().update()
+
+
+
+class Boswer(Entity):
+
+    def __init__(self, x, y):
+        super().__init__(x, y, BOSWER_IMAGE)
+
+   
+    def handle_input(self):
+        self.x_vel = -1
+        if (self.x == 0):
+            self.x = 700
+
+        
+
+    def update(self):
+        self.handle_input()
+        super().update()
+
+    def getPosition(self):
+
+        positionArray = [0,0, 0]
+
+        positionArray[0]= self.x
+        positionArray[1] = self.x + MARIO_WIDTH
+        positionArray[2] = self.y
+        
+
+        return positionArray
+
+# Initilize entity list with Mario and other entities later
+entity_list = pygame.sprite.Group()
+mario = Mario(0, 200 + MARIO_HEIGHT / 2)
+
+
+boswer = Boswer(700, 0)
+
+
+
+entity_list.add(mario)
+
+
+entity_list.add(boswer)
+
+
+
+def get_entity_list():
+    return entity_list
+
+def get_mario():
+    return mario
+
+def get_boswer():
+    return boswer
+
