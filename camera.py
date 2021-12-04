@@ -1,9 +1,9 @@
 import pygame
-import entities
-import objects
 import window
+import map
 
-mario = entities.get_mario()
+MAX_X = map.MAP_WIDTH
+mario = map.MARIO
 
 class Camera():
     def __init__(self):
@@ -11,32 +11,18 @@ class Camera():
         self.y = 0
 
     def update(self):
-        self.x += mario.x_vel
-        self.y += mario.y_vel
+        self.x = mario.x + mario.width / 2 - window.WIDTH / 2
+        self.y = mario.y + mario.height / 2 - window.HEIGHT / 2
 
-        lockx = mario.x < window.WIDTH / 2 - entities.MARIO_WIDTH / 2
-        locky = mario.y < window.HEIGHT / 2 + entities.MARIO_HEIGHT / 2
-        if (lockx):
+        if (mario.x < window.WIDTH / 2 - mario.width / 2): 
             self.x = 0
-        if (locky):
+        if (mario.x > MAX_X - window.WIDTH / 2 - mario.width / 2):
+            self.x = MAX_X - window.WIDTH
+        if (mario.y < window.HEIGHT / 2 - mario.height / 2):
             self.y = 0
         
-        for entity in entities.get_entity_list():
-            if lockx and locky:
-                entity.rect.bottomleft = (entity.x, -entity.y + window.HEIGHT)
-            elif lockx:
-                entity.rect.bottomleft = (entity.x, -entity.y + window.HEIGHT + self.y)
-            elif locky:
-                entity.rect.bottomleft = (entity.x + -self.x, -entity.y + window.HEIGHT)
-            else:
-                entity.rect.bottomleft = (entity.x + -self.x, -entity.y + window.HEIGHT + self.y)
-            
-        for object in objects.get_object_list():
-            if lockx and locky:
-                object.rect.bottomleft = (object.x, -object.y + window.HEIGHT)
-            elif lockx:
-                object.rect.bottomleft = (object.x, -object.y + window.HEIGHT + self.y)
-            elif locky:
-                object.rect.bottomleft = (object.x + -self.x, -object.y + window.HEIGHT)
-            else: 
-                object.rect.bottomleft = (object.x + -self.x, -object.y + window.HEIGHT + self.y)
+        for entity in map.ENTITY_LIST:
+            entity.rect.bottomleft = (entity.x + -self.x, -entity.y + window.HEIGHT + self.y)
+                
+        for object in map.OBJECT_LIST:
+            object.rect.bottomleft = (object.x + -self.x, -object.y + window.HEIGHT + self.y)
