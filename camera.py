@@ -1,16 +1,15 @@
 import pygame
 import window
-import map
+# import map
 import entities
 import objects
 
-MAX_X = map.MAP_WIDTH
-mario = map.MARIO
+MAX_X = entities.MAP_WIDTH
 
 
-mario = entities.get_mario()
+mario = entities.MARIO
 
-boswer = entities.get_boswer()
+# boswer = entities.BOSWER
 class Camera():
     def __init__(self):
         self.x = 0
@@ -27,8 +26,8 @@ class Camera():
         if (mario.y < window.HEIGHT / 2 - mario.height / 2):
             self.y = 0
         
-        for entity in map.ENTITY_LIST:
+        for entity in entities.ENTITY_LIST:
             entity.rect.bottomleft = (entity.x + -self.x, -entity.y + window.HEIGHT + self.y)
                 
-        for object in map.OBJECT_LIST:
+        for object in entities.OBJECT_LIST:
             object.rect.bottomleft = (object.x + -self.x, -object.y + window.HEIGHT + self.y)

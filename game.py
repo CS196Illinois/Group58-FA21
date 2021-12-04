@@ -24,6 +24,8 @@ VICT_IMAGE = pygame.transform.rotate(pygame.transform.scale(VICT_IMAGE_LOAD,(VIC
 
 # main game loop
 # draws entities, background, and objects onto the screen
+
+
 def main():
     run = True
     while run:
@@ -32,12 +34,13 @@ def main():
                 run = False
         win.blit(BACKGROUNDIMAGE, (0, 0))
         # update all entities
-        map.ENTITY_LIST.update(map.OBJECT_LIST, map.FLAG)
+        for entity in entities.ENTITY_LIST:
+            entity.update()
         # draw objects onto screen
         camera.update()
-        map.OBJECT_LIST.draw(win)
+        entities.OBJECT_LIST.draw(win)
         # draw all sprites onto screen
-        map.ENTITY_LIST.draw(win)
+        entities.ENTITY_LIST.draw(win)
         pygame.display.update()
 
     pygame.quit()

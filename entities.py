@@ -1,18 +1,33 @@
 import os
 import pygame
 import input
-import objects
+# import objects
 import map
 
-# Mario size
-MARIO_WIDTH = 55
-MARIO_HEIGHT = 40
-MARIO_IMAGE_LOAD = pygame.image.load(os.path.join('images/mario.png'))
-MARIO_IMAGE = pygame.transform.rotate(pygame.transform.scale(MARIO_IMAGE_LOAD, (MARIO_WIDTH, MARIO_HEIGHT)),0)
+MAP_WIDTH = 1500
 
 
-BOSWER_IMAGE_LOAD = pygame.image.load(os.path.join('images/boswer.png'))
-BOSWER_IMAGE = pygame.transform.rotate(pygame.transform.scale(BOSWER_IMAGE_LOAD,(55, 40)),0)
+# extends Sprite to make collision detection easier
+class Object(pygame.sprite.Sprite):
+    def __init__(self, x, y, collidable, image):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = image
+        self.rect = image.get_rect()
+        self.x, self.y = x, y
+
+        self.collidable = collidable
+
+        # self.width = image.get_width()
+        # self.height = image.get_height()
+
+        # self.left = x
+        # self.right = x + self.width
+        # self.bottom = y
+        # self.top = y + self.height
+        self.left = x
+        self.right = x + image.get_width()
+        self.bottom = y
+        self.top = y + image.get_height()
 
 
 GRAVITY = -0.03
@@ -22,6 +37,7 @@ MIN_Y_VEL = -2.5
 # Allows entity to contain a rect with many useful position variables (look at documentation)
 class Entity(pygame.sprite.Sprite):
     def __init__(self, x, y, image):
+        # super(Entity, self).__init__()
         pygame.sprite.Sprite.__init__(self)
         self.image = image
         # width and height of sprite set when the image is loaded
@@ -65,7 +81,7 @@ class Entity(pygame.sprite.Sprite):
         self.top = self.y + self.height
 
     # update x and y position of entity, prevent it from going off the map and check collisions 
-    def update(self, object_list):
+    def update(self):
         # change x and y based on x and y velocity
         self.x_vel += self.x_acc
         self.y_vel += self.y_acc + GRAVITY
@@ -75,14 +91,14 @@ class Entity(pygame.sprite.Sprite):
         self.x += self.x_vel
         self.left = self.x
         self.right = self.x + self.width
-        for object in object_list:
-            self.check_collision_x(object)
+        for obj in OBJECT_LIST:
+            self.check_collision_x(obj)
 
         self.y += self.y_vel
         self.bottom = self.y
         self.top = self.y + self.height
-        for object in object_list:
-            self.check_collision_y(object)
+        for obj in OBJECT_LIST:
+            self.check_collision_y(obj)
 
         if (self.x < 0):
             self.x = 0
@@ -93,12 +109,12 @@ class Entity(pygame.sprite.Sprite):
 # Primary Mario/player class, extends Entity and Sprite
 class Mario(Entity):
     def __init__(self, x, y, image):
+        
         super().__init__(x, y, image)
 
     # sets Mario's velocity based on which input is being given
     def handle_input(self):
         arrayPosition = boswer.getPosition()
-        objectPosition = objects.get_object_positionArray()
         keys = input.keys_pressed()
         if(keys[input.LEFT]):
             self.x_vel = -1.25
@@ -146,12 +162,12 @@ class Mario(Entity):
 
 class Boswer(Entity):
 
-    def __init__(self, x, y):
-        super().__init__(x, y, BOSWER_IMAGE)
+    def __init__(self, x, y, image):
+        super().__init__(x, y, image)
 
    
     def handle_input(self):
-        self.x_vel = -1
+        self.x_vel = -.1
         if (self.x == 0):
             self.x = 700
 
@@ -173,27 +189,68 @@ class Boswer(Entity):
         return positionArray
 
 # Initilize entity list with Mario and other entities later
-entity_list = pygame.sprite.Group()
-mario = Mario(0, 200 + MARIO_HEIGHT / 2)
-
-
-boswer = Boswer(700, 0)
 
 
 
-entity_list.add(mario)
+
+# def get_entity_list():
+#     return entity_list
+
+# def get_mario():
+#     return mario
+
+# def get_boswer():
+#     return boswer
 
 
-entity_list.add(boswer)
+
+
+# entities in map
+MARIO_WIDTH = 55
+MARIO_HEIGHT = 40
+MARIO_IMAGE_LOAD = pygame.image.load(os.path.join('images/mario.png'))
+MARIO_IMAGE = pygame.transform.rotate(pygame.transform.scale(MARIO_IMAGE_LOAD, (MARIO_WIDTH, MARIO_HEIGHT)),0)
+
+
+BOSWER_IMAGE_LOAD = pygame.image.load(os.path.join('images/boswer.png'))
+BOSWER_IMAGE = pygame.transform.rotate(pygame.transform.scale(BOSWER_IMAGE_LOAD,(55, 40)),0)
 
 
 
-def get_entity_list():
-    return entity_list
+ENTITY_LIST = pygame.sprite.Group()
+MARIO = Mario(400 - MARIO_WIDTH / 2, 200 + MARIO_HEIGHT / 2, MARIO_IMAGE)
+ENTITY_LIST.add(MARIO)
+boswer = Boswer(1000,  200 + MARIO_HEIGHT / 2, BOSWER_IMAGE)
+ENTITY_LIST.add(boswer)
 
-def get_mario():
-    return mario
+# objects in map
+TILE_WIDTH = 60
+TILE_HEIGHT = 60
+TILE_IMAGE_LOAD = pygame.image.load(os.path.join('images/floor_tile.png'))
+TILE_IMAGE =  pygame.transform.rotate(pygame.transform.scale(TILE_IMAGE_LOAD, (TILE_WIDTH, TILE_HEIGHT)),0)
 
-def get_boswer():
-    return boswer
+PIPE_WIDTH = 50
+PIPE_HEIGHT = 100
+PIPE_IMAGE_LOAD = pygame.image.load(os.path.join('images/pipe1.png'))
+PIPE_IMAGE = pygame.transform.rotate(pygame.transform.scale(PIPE_IMAGE_LOAD,(PIPE_WIDTH, PIPE_HEIGHT)),0)
+
+FLAG_HEIGHT = 200
+FLAG_WIDTH = 50
+FLAG_IMAGE_LOAD = pygame.image.load(os.path.join('images/flag.png'))
+FLAG_IMAGE = pygame.transform.rotate(pygame.transform.scale(FLAG_IMAGE_LOAD,(FLAG_WIDTH, FLAG_HEIGHT)),0)
+FLAG = Object(1450, 60, False, FLAG_IMAGE)
+OBJECT_LIST = pygame.sprite.Group()
+
+OBJECT_LIST.add(FLAG)
+for i in range(0, 25):
+    OBJECT_LIST.add(Object(0+i*TILE_WIDTH, 0, True, TILE_IMAGE))
+OBJECT_LIST.add(Object(300, 60, True, PIPE_IMAGE))
+OBJECT_LIST.add(Object(500, 60, True, PIPE_IMAGE))
+OBJECT_LIST.add(Object(700, 60, True, PIPE_IMAGE))
+OBJECT_LIST.add(Object(760, 60, True, PIPE_IMAGE))
+OBJECT_LIST.add(Object(760, 120, True, PIPE_IMAGE))
+OBJECT_LIST.add(Object(1000, 100, True, PIPE_IMAGE))
+OBJECT_LIST.add(Object(1000, 160, True, PIPE_IMAGE))
+
+
 
