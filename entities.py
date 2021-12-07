@@ -4,6 +4,8 @@ import input
 # import objects
 import map
 
+
+
 MAP_WIDTH = 1500
 
 
@@ -114,6 +116,10 @@ class Mario(Entity):
 
     # sets Mario's velocity based on which input is being given
     def handle_input(self):
+        global gameOver
+        gameOver = False
+        if (self.x > 1450):
+            gameOver = True
         arrayPosition = boswer.getPosition()
         keys = input.keys_pressed()
         if(keys[input.LEFT]):
@@ -136,6 +142,8 @@ class Mario(Entity):
             print("YOU HAVE LOST")
             self.x = 0
             self.y = 200 + MARIO_HEIGHT / 2
+
+        
             
 
 
@@ -253,4 +261,5 @@ OBJECT_LIST.add(Object(1000, 100, True, PIPE_IMAGE))
 OBJECT_LIST.add(Object(1000, 160, True, PIPE_IMAGE))
 
 
-
+def getGameOver():
+    return gameOver

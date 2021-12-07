@@ -18,7 +18,7 @@ BACKGROUND = pygame.image.load(os.path.join('images/bg2.png'))
 BACKGROUNDIMAGE = pygame.transform.rotate(pygame.transform.scale(BACKGROUND, (BACKGROUND_WIDTH, BACKGROUND_HEIGHT)),0)
 
 VICT_WIDTH = 1000
-VICT_HEIGHT = 300
+VICT_HEIGHT = 600
 VICT_IMAGE_LOAD = pygame.image.load(os.path.join('images/victory_royale.png'))
 VICT_IMAGE = pygame.transform.rotate(pygame.transform.scale(VICT_IMAGE_LOAD,(VICT_WIDTH, VICT_HEIGHT)),0)
 
@@ -36,11 +36,17 @@ def main():
         # update all entities
         for entity in entities.ENTITY_LIST:
             entity.update()
+            
         # draw objects onto screen
         camera.update()
         entities.OBJECT_LIST.draw(win)
         # draw all sprites onto screen
         entities.ENTITY_LIST.draw(win)
+        
+
+        if (entities.getGameOver()):
+            win.blit(VICT_IMAGE, (0, 0))
+
         pygame.display.update()
 
     pygame.quit()
