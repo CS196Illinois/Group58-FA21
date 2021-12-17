@@ -1,19 +1,29 @@
-import pygame
 import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+import pygame
+import map
+import entities
+import objects
+import window
+import camera
 
-# set up
-WIDTH = 800
-HEIGHT = 400
-WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Mario Game")
+win = window.WINDOW
+camera = camera.Camera()
+camera.update()
 
-MARIO_WIDTH = 55
-MARIO_HEIGHT = 40
+# set up background
+BACKGROUND_WIDTH = window.WIDTH
+BACKGROUND_HEIGHT = window.HEIGHT
+BACKGROUND = pygame.image.load(os.path.join('images/bg2.png'))
+BACKGROUNDIMAGE = pygame.transform.rotate(pygame.transform.scale(BACKGROUND, (BACKGROUND_WIDTH, BACKGROUND_HEIGHT)),0)
 
+VICT_WIDTH = 1000
+VICT_HEIGHT = 600
+VICT_IMAGE_LOAD = pygame.image.load(os.path.join('images/victory_royale.png'))
+VICT_IMAGE = pygame.transform.rotate(pygame.transform.scale(VICT_IMAGE_LOAD,(VICT_WIDTH, VICT_HEIGHT)),0)
 
-# put mario on screen
-MARIO_IMAGE = pygame.image.load(os.path.join('mario.png'))
-MARIO = pygame.transform.rotate(pygame.transform.scale(MARIO_IMAGE, (MARIO_WIDTH, MARIO_HEIGHT)),0)
+# main game loop
+# draws entities, background, and objects onto the screen
 
 
 def main():
@@ -22,10 +32,30 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-        WINDOW.fill((0,51,255))
-        WINDOW.blit(MARIO, (100,320))
+        win.blit(BACKGROUNDIMAGE, (0, 0))
+        # update all entities
+        for entity in entities.ENTITY_LIST:
+            entity.update()
+            
+        # draw objects onto screen
+        camera.update()
+        entities.OBJECT_LIST.draw(win)
+        # draw all sprites onto screen
+        entities.ENTITY_LIST.draw(win)
+        
+
+        if (entities.getGameOver()):
+            win.blit(VICT_IMAGE, (0, 0))
+
         pygame.display.update()
 
     pygame.quit()
+
+def game_over():
+    pass
+
+def game_won():
+    run = False
+    win.blit(VICT_IMAGE_LOAD)
 
 main()
